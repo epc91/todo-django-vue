@@ -56,6 +56,9 @@
         <div class="done">
           <div class="card" v-for="task in tasks" v-if="task.status === 'done'" v-bind:key="task.id" >
             <div class="card-content">{{ task.description }}</div>
+            <footer class="card-content">
+              <a class="card-footer-item" v-on:click="setStatus(task.id, 'todo')" >To do</a>
+            </footer>
           </div>
         </div>
       </div>
