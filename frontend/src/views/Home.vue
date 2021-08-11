@@ -44,6 +44,9 @@
         <div class="todo">
           <div class="card" v-for="task in tasks" v-if="task.status === 'todo'" v-bind:key="task.id" >
             <div class="card-content">{{ task.description }}</div>
+            <footer class="card-footer">
+              <a class="card-footer-item" v-on:click="setStatus(task.id, 'done')">Done</a>
+            </footer>
           </div>
         </div>
       </div>
@@ -117,6 +120,31 @@ export default {
         })
       }
     },
+    // PUT
+    setStatus(task_id, status) {
+      const task = this.tasks.filter(task => task.id === task_id)[0]
+      const description = task.description
+      axios({
+        method: 'put',
+        url: 'http://127.0.0.1:8000/tasks/' + task_id + '/',
+        headers: {
+          'Content-Type': 'application/json',
+
+        },
+        data: {
+          description: description,
+          status: status,
+        },
+        auth: {
+          username: 'epc91',
+          password: 'qwerty',
+        },
+
+      })
+      .then(() => {
+        task.status = status
+      })
+    }
 
   }
 
