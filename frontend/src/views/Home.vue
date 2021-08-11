@@ -6,13 +6,13 @@
     <div class="columns">
       <!-- Sub Column  #1 -->
       <div class="column is-3 is-offset-3">
-        <form>
+        <form v-on:submit.prevent="addTask">
           <h2 class="subtitle">Add Task</h2>
           <!-- Field #1 -->
           <div class="field">
             <label class="label">Description</label>
             <div class="control">
-              <input type="text" class="input">
+              <input type="text" class="input" v-model="description">
             </div>
           </div>
           <!-- Field #2 -->
@@ -20,7 +20,7 @@
             <label class="label">Status</label>
             <div class="control">
               <div class="select">
-                <select>
+                <select v-model="status">
                   <option value="todo">To Do</option>
                   <option value="done">Done</option>
                 </select>
@@ -67,14 +67,17 @@ export default {
   name: 'Home',
   data () {
     return {
-      tasks: []
+      tasks: [],
+      description: '',
+      status: 'todo'
     }
   },
   mounted () {
     this.getTasks()
   },
   methods: {
-    getTasks () {
+    // GET
+    getTasks() {
       axios({
         method: 'get',
         url: 'http://127.0.0.1:8000/tasks/',
@@ -83,8 +86,40 @@ export default {
           password: 'qwerty'
         }
       }).then(response => this.tasks = response.data)
-    }
+    },
+    // POST
+    addTask() {
+      if (this.description) {
+        axios({
+          method: 'post',
+          url: 'http://127.0.0.1:8000/tasks/',
+          data: {
+            description: this.description,
+            status: this.status,
+          },
+          auth: {
+            username: 'epc91',
+            password: 'qwerty',
+          }
+        })
+        .then(response => {
+          let newTask = {
+            'id': response.data.id,
+            'description': this.description,
+            'status': this.status
+          }
+          this.tasks.push(newTask),
+          this.description = '',
+          this.status = 'todo'
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      }
+    },
+
   }
+
 }
 </script>
 
